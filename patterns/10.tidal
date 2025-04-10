@@ -1,0 +1,37 @@
+do
+  let g x = (const $ s "~") $ x
+  let msk = "[1 0 1 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0]/2"
+  let markovmatrix = [
+          [0, 1, 0.2, 0.2], 
+          [0.2, 1, 2, 2], 
+          [0.2, 0.2, 0, 1],
+          [0.2, 0.2, 1, 0]
+        ]  
+  d1
+    $ someCyclesBy (range 0 0.7 $ slow 11 $ perlin) (iter 8)
+    $ (1 ~>)
+    $ someCyclesBy 0.2 (linger "1s")
+    $ (1 ~>)
+    $ sometimesBy 0.25 (slow 2)
+    $ (1 ~>)
+    $ sometimesBy 0.25 (slow 2)
+    $ (1 ~>)
+    $ degradeBy (range 0 0.8 $ slow 13.11 $ perlin)
+    $ (1 ~>)
+    $ stack [
+      off "{3s 1s 1s}%16" (# midichan 8)
+        $ mask msk 
+        $ midichan (fmap([2,3,6,7]!!) $ markovPat 16 0 markovmatrix)
+        # s "rytm" # amp 1 # note "c3"
+      , mask msk 
+        $ amp (fmap([1, 0.1, 0.1, 0.1]!!) $ markovPat 16 0 markovmatrix)
+          # s "harmor" # note "c" # midichan 8
+    ] # cps 0.666
+  d2 $ whenmod 60 30 g $  (0.5 ~>) $ midichan 1 # note "c3" # amp 1 # s "rytm"
+  d3 $ slow 8 $ midichan 4 # note "c3" # amp 1 # s "rytm"
+
+
+d3 $ slow 4 $ mask "[1 0 1 1 0 1 0 0 1 0 0 0 1 1 0]/2" $ (|+ note "-24") $ note (scale "locrian" "0 4 2 -1 -2 -3 1 2 3 4 8") # s "rytm" # midichan 0 # amp 1
+
+    hush
+

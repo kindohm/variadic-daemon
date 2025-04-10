@@ -1,0 +1,28 @@
+hush
+
+do
+  let g x = (const $ s "~") $ x
+  let patmask = (fast (segment 1 $ choose [0.5,0.75..3]) $ "[1]/10")
+  d1
+    $ mask patmask
+    $ stack [
+      slow 4 $ superimpose ((# s "harmor3") . (# midichan 14)) $ midichan 3 # note "c5" # amp 1 # s "harmor" # legato 0.5
+      , mask "[1 1 1 1 1 0]/2" $ degradeBy 0.3 $ struct "1*12" $ midichan 6 # note "c3" # amp 1 # s "rytm"
+      , slow 2 $ note "~ b2 ~ f3" # midichan 5 # amp 1 # s "rytm"
+      , mask "[1 [1 0]/2 0]/2" $ midichan (fmap([2,3,127]!!) $ markovPat 24 0 [[0.1, 0.8, 0.1], [0.1, 0.1, 0.8], [0.1, 0.05, 1]]) # s "rytm" # amp 1 # note "c3"
+    ] # cps (100/120/2)
+  d2
+    $ mask (inv patmask)
+    $ stack [
+      g $ slow 4 $ superimpose ((# s "harmor3") . (# midichan 14)) $ midichan 3 # note "c5" # amp 1 # s "harmor" # legato 0.5
+      , g $ mask "[1 1 1 1 1 0]/2" $ degradeBy 0.3 $ struct "1*12" $ midichan 8 # note "c3" # amp 1 # s "rytm"
+      , slow 2 $ note "~ b2 ~ f3" # midichan 4 # amp 1 # s "rytm"
+      , g $ mask "[1 [1 0]/2 0]/2" $ every 5 rev $ midichan (fmap([10,11,127]!!) $ markovPat 24 0 [[0.1, 0.8, 0.1], [0.1, 0.1, 0.8], [0.1, 0.05, 1]]) # s "rytm" # amp 1 # note "c3"
+    ] # cps (100/120/2)
+  d3
+    $ g $ fast 2 $ midichan 0 # note "c3" # amp 1 # s "rytm"
+
+    hush
+    
+
+d1 $ struct "1*2" $ s "rytm" # midichan 11 # note "c3" # amp 1

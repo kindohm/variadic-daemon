@@ -1,0 +1,50 @@
+do
+  let g x = (const $ s "~") $ x
+  let patmask = "1" --  (fast (segment 1 $ choose [0.5,0.75..3]) $ "[1 0]/10")
+  d1
+    $ mask patmask
+    $ stack [
+      mask "[1 0 1 1 1 0 0 1 0 0 0 0 0 0]/2"
+      $ degradeBy 0
+      $ stack [
+        someCyclesBy 0 (|+ midichan "-2") 
+          $ mask "[1  1 [1 0]/2 0 ]/2" 
+          $ midichan (fmap([6,7,126]!!) $ markovPat 16 0 [[0.1, 0.8, 0.1], [0.8, 0.1, 0.8], [0.6, 0.1, 0.6]]) 
+          # s "rytm" # amp 1 # note "c3"
+        , g $ someCyclesBy (range 0.3 0.6 $ slow 10.111 $ perlin) (1234 ~>) 
+          $ mask "[1 [1 0]/2 0]/2" $ midichan (fmap([4,127,127]!!) 
+          $ markovPat 16 0 [[0.1, 0.8, 0.1], [0.8, 0.1, 0.8], [0.6, 0.1, 0.6]]) # s "harmor" # amp 1 # note "c5"
+      ] # cps (150/120/2)
+      , degradeBy 1 $ slow 2 $ midichan "[10 11 [10 10 ~ 11] ~]" # s "rytm" # amp 1 # note "c3"
+      -- backbeat
+      , (0.5 ~>) $ midichan 8 # note "c3" # amp 1 # s "rytm"
+      -- harmor switch
+      , ccn 100 # s "harmor3" # midichan 0 # ccv 127
+    ]
+
+hush
+
+-- backup
+do
+  let g x = (const $ s "~") $ x
+  let patmask = "1" --  (fast (segment 1 $ choose [0.5,0.75..3]) $ "[1 0]/10")
+  d1
+    $ mask patmask
+    $ stack [
+      mask "[1 0 1 1 0 1 1 1 1  0 0 0 0 0]/2"
+      $ degradeBy 0
+      $ stack [
+        someCyclesBy 0 (|+ midichan "-2") 
+          $ mask "[1 [1 0]/2 0]/2" 
+          $ midichan (fmap([2,3,126]!!) $ markovPat 16 0 [[0.1, 0.8, 0.1], [0.8, 0.1, 0.8], [0.6, 0.1, 0.6]]) 
+          # s "rytm" # amp 1 # note "c3"
+        , g $ someCyclesBy (range 0.3 0.6 $ slow 10.111 $ perlin) (1234 ~>) $  mask "[1 [1 0]/2 0]/2" $ midichan (fmap([4,127,127]!!) $ markovPat 16 0 [[0.1, 0.8, 0.1], [0.8, 0.1, 0.8], [0.6, 0.1, 0.6]]) # s "harmor" # amp 1 # note "c5"
+      ] # cps (150/120/2)
+      ,  g $ degradeBy 0 $ slow 2 $ midichan "[10 11 [10 10 ~ 11] ~]" # s "rytm" # amp 1 # note "c3"
+      -- backbeat
+      , (0.5 ~>) $ midichan 8 # note "c3" # amp 1 # s "rytm"
+    ]
+
+
+
+    hush

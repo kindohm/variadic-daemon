@@ -1,0 +1,83 @@
+hush
+
+
+do
+  let maskpat = "{ 0 0 0 0}%2"
+  let g x = const (s "~") $ x
+  let ccnPat = (fmap([0,32,64,92,127]!!) 
+                  $ markovPat 16 0 [
+                    [0.44, 0.9, 0.6, 0.623, 0.1], 
+                    [0.3, 0.3, 0.6, 0.87, 0.1], 
+                    [0.4, 0.5, 0.6, 0.23, 0.9], 
+                    [0.8, 0.2, 0.4, 0.7, 0.8],
+                    [0.4, 0.1, 0.9, 0.7, 0.6]
+                  ]
+                )
+  d1
+    $ mask maskpat
+    $ stack [
+      -- main
+      degradeBy 0
+        $ (1 ~>)
+        $ sometimesBy 0.25 (slow 2)
+        $ (1 ~>)
+        $ sometimesBy 0.25 (slow 2)
+        $ (1 ~>)
+        $ mask "[1 0 0 0 0 1 0  0  0    ]/2"
+        $ midichan (fmap([0,1,2]!!) $ markovPat 16 0 [[0.1, 0.9, 0.2], [0.2, 0.1, 0.9], [0.9, 0.2, 0.1]])
+        # s "rytm" # note "c3" # cps (160/120/2) # amp 1
+      , sometimesBy 0.333 (slow 2 ) 
+        $ (3 ~>) 
+        $ degradeBy 0.25 $ slow 2 $ amp (fmap([1,0.1,0.1]!!) $ markovPat 16 0 [[0.1, 0.9, 0.2], [0.2, 0.1, 0.9], [0.9, 0.2, 0.1]]) 
+        # s "harmor" # midichan 0 # note (scale "ritusen" "{0 1 -1 2 -2}%16")
+        -- anchor
+      , (0.5 ~>) $ mask "1" $ slow 1 $ s "rytm/2" # midichan 3 # note "c3" # amp 1
+      -- ch / perc
+      , mask "1" $ mask "1 0 0 1 0 0 1 0 1 0 0 0 1 0 1 0 0 1 0 0 0" $ struct "1*16" $ midichan 8 # s "rytm" # note "c3" # amp 1
+      -- thud
+      , ("1e" <~) $ slow 8 $ s "rytm" # midichan 4 # note "c3" # amp 1
+      -- perf
+      , stack [
+        slow 2.3333 $ ccv ccnPat # ccn "35"
+        , slow 3.1324 $ ccv ccnPat # ccn "36"
+        , slow 2.9898 $ ccv ccnPat # ccn "37"
+        , slow 3.781 $ ccv ccnPat # ccn "39"
+        , slow 3.1111 $ ccv ccnPat # ccn "44"
+     ] # s "rytm" # midichan 0
+    ] # cps (160/120/2)
+  d2
+    $ mask (inv maskpat)
+    $ stack [
+       -- main
+      someCyclesBy 0 rev
+        $ (1 ~>)
+        $ someCyclesBy 0 (iter 8)
+        $ (1 ~>)
+        $ sometimesBy 0 (stutWith ((32 ~>) $ choose [4,5..16]) "1s" (|* amp 0.9))
+        $ (1 ~>)
+        $ sometimesBy 0.333 (slow 2)
+        $ (1 ~>)
+        $ mask "[1 0 0 0 0 1 0  0  0 0 0 0 0]/2"
+        $ midichan (fmap([5,6,7]!!) $ markovPat 16 0 [[0.2, 0.8, 0.3], [0.3, 0.2, 0.8], [0.7, 0.4, 0.4]])
+        # s "rytm" # note "c3" # cps (160/120/2) # amp 1 # legato (range 1 7 $ (3 ~>) $ rand)
+      -- hat
+      , foldEvery [2,3] (slow (4/3)) $ struct "1(3,16)" $ s "rytm" # midichan 9 # note "c3" # amp 1
+      -- weirdness
+      , (|+ note "-24") $ fast ((4 ~>) $ choose [0.1, 0.2..3]) $ midichan "10 11" # note (scale "minor" "{0 1 -1 2 -2 3 -3}%16") # amp 1 # s "rytm"
+      -- boom from part 1
+      , slow 7 $ midichan 4 # note "c3" # amp 1 # s "rytm" # legato 0.5
+            , stack [
+        slow 2.3333 $ ccv ccnPat # ccn "41"
+        , slow 2.6661182 $ ccv ccnPat # ccn "42"
+        , slow 3.1324 $ ccv ccnPat # ccn "43"
+     ] # s "rytm" # midichan 0
+    ] # cps (160/120/2)
+  p "scene"
+    $  ccv (segment ((44 ~>) $ choose [0.05,0.1..4]) $ choose [0,1,2]) # s "rytm" # midichan 12 # ccn 92
+
+
+
+
+  hush
+
+d1 $ fast 2 $ s "rytm" # midichan 7 # note "c3" # amp 1

@@ -1,0 +1,62 @@
+hush
+
+do
+  let g x = (const $ s "~") $ x
+  let ccnPat = (fmap([0,32,64,92,127]!!) 
+                  $ markovPat 16 0 [
+                    [0.44, 0.9, 0.6, 0.623, 0.1], 
+                    [0.3, 0.3, 0.6, 0.87, 0.1], 
+                    [0.4, 0.5, 0.6, 0.23, 0.9], 
+                    [0.8, 0.2, 0.4, 0.7, 0.8],
+                    [0.4, 0.1, 0.9, 0.7, 0.6]
+                  ]
+                )
+  let marc x = (fmap( x!!) $ markovPat 16 0 [
+          [0.1, 0.8, 0.1, 0.1, 0.3], 
+          [0.1, 0.1, 0.8, 0.2, 0.3], 
+          [0.8, 0.1, 0.8, 0.3, 0.3],
+          [0.8, 0.4, 0.8, 0.4, 0.3],
+          [0.8, 0.4, 0.8, 0.4, 0.3]
+        ])
+      hpat = "{1@9 1@9 1@9 1@9 0@19}%16"
+      patmask = (foldEvery [2,3] (1 ~>) $ "{ 0 0 0 0 0 0}%2")
+  d1
+    $ mask patmask
+    $ degradeBy 0
+    $ stack [
+      mask "1([5 [2 2 2]/3]/2,8)" $ midichan (marc [2,3,127,1,8])
+        # s "rytm"  # note "c3" # amp 1
+      , g $ struct hpat $ s "harmor" # amp 1 # note "c5" # midichan 2
+      , g $ struct (inv hpat) $ s "harmor" # amp 0.1 # note "c5" # midichan 2
+      , struct hpat $ s "harmor3" # midichan 15 # note "c5" # amp 1
+      , (|+ note "-24") $ slow 3 $ note (scale "locrian" "<0 -1 1 -2 2 -3 3>") # s "rytm" # midichan 0 # amp 1
+    ] # cps (120/120/2)
+  d2  
+    $ mask (inv patmask)
+    $ someCyclesBy 0.25 (iter 16)
+    $ (4 ~>)
+    $ degradeBy 0.333
+    $ (4 ~>)
+    $ stack [
+      g $ slow 6 $ note "c3" # amp 0.85 # s "rytm" # midichan 4
+      , degradeBy 0 $ sometimesBy 0.1 (slow 2 ) $ (1 ~>) $ sometimesBy 0.333 (off "3s" (|+ note "{1 -12 -12}%16")) 
+        $ mask "1(9 5,16)" $ midichan (marc [6,7,127,127,9])
+        # s "rytm"  # note "c3" # amp 1
+      , (0.5 ~>) $ midichan 10 # note "c3" # amp 1 # s "rytm"
+    ] # cps (120/120/2)
+  d3  -- perf
+    $ slow 3 $ stack [
+        slow 2.3333 $ ccv ccnPat # ccn "37"
+        , slow 3.1324 $ ccv ccnPat # ccn "39"
+        , slow 3.3324 $ ccv ccnPat # ccn "42"
+        , slow 2.1324 $ ccv ccnPat # ccn "43"
+        , slow 2.66669 $ ccv ccnPat # ccn "46"
+     ] # s "rytm" # midichan 0
+  p "scene"
+    $ ccv (segment ((44 ~>) $ choose [0.05,0.1..4]) $ choose [0,1,2]) # s "rytm" # midichan 12 # ccn 92
+
+
+
+d1 $ s "rytm" # midichan 11 # note "c3" # amp 1
+
+    hush

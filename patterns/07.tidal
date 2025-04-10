@@ -1,0 +1,18 @@
+do
+  d1
+    $ stack [
+      slow 4 $ midichan 1 # note "c5" # amp 1 # s "harmor2" # legato 0.75
+      , slow (4/3) $ superimpose ((|+ midichan 4) . iter 16) $ iter 16 $ every 0 (slow 2) $ mask "[1 0 1 1 0 1 1 0 1 0 1 0  0 0 0  0 0 0 0]/3" 
+        $ midichan (fmap([2,3,1,0]!!) $ markovPat 32 0 [
+        [0.1, 0.8, 0.1, 0.1], 
+        [0.1, 0.1, 0.8, 0.1], 
+        [0.1, 0.1, 0.1, 0.8], 
+        [0.8, 0.1, 0.1, 0.8]
+      ]) # s "rytm" # amp 1 # note "c3"
+    , someCyclesBy 0.2 (# ccv 127) $ ccn 35 # midichan 0 # ccv 0 # s "rytm"
+    ] # cps (95/120/2)
+  d2
+    $ sometimesBy 0.25 (off "[3e 3s]*3" id)
+    $ midichan "~ 8 ~ ~" # s "rytm" # note "c3" # amp 1
+
+    hush
