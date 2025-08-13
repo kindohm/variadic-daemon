@@ -1,4 +1,4 @@
-
+hush
 
 do
   let g x = const (s "~") $ x
@@ -11,14 +11,14 @@ do
           [0.1, 0.2, 2, 0.7]
         ]
   d1
-    $ (100 ~>)
-    $ someCyclesBy (segment 10 $ range 0 0.8 $ slow 20 $ perlin) (iter 10)
+    $ (11100 ~>)
+    $ someCyclesBy (segment 10 $ range 0 0.8 $ slow 13.333 $ perlin) (iter 10)
     $ (1 ~>)
     $ sometimesBy 0.2 (|+ note "-10")
     $ (1 ~>)
-    $ sometimesBy 0.2 (slow 2)
+    $ sometimesBy (range 0 0.5 $ slow 11.111 $ perlin) (slow 2)
     $ (1 ~>)
-    $ degradeBy (segment 20 $ range 0 0.8 $ slow 19 $ perlin)
+    $ degradeBy (segment 20 $ range 0 0.1 $ slow 18.1891 $ perlin)
     $ (1 ~>)
     $ stack [
       mask maskpat
@@ -32,6 +32,15 @@ do
         $ (5 ~>) $ mask "[1 1 1 1 0]/4" $ fast 5 $ midichan 8 
           # note "c3" # amp (range 0.5 1 $ (44 ~>) $ rand) # s "rytm"
     ] # cps (120/120/2)
+  d4 
+    $ (11 ~>)
+    $ slow (segment 2 $ range 1 4 $ (2389 <~) $ slow 14 $ perlin) 
+      $ s "rytm" # ccn 92 # ccv (choose [0,1,2]) # midichan 12
+  d2 $ whenmod 60 30 g $ slow 11 $ s "rytm" # midichan 4 # note "c3" # amp 1
+
+
+d1 $ fast 0.5 $ midichan 0 # note "c3" # amp 1 # s "rytm"
+
 
 -- hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi hi
 

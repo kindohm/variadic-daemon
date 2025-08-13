@@ -1,0 +1,59 @@
+
+
+
+hush
+
+do
+  let g x = (const $ s "~") $ x
+  let origmask = "[1 1 0 1 1 0 1 1 0 0 0 0 0 0]/2"
+  let markovmatrix = [
+          [0, 1, 0.2, 0.2], 
+          [0.2, 1, 2, 2], 
+          [0.2, 0.2, 0, 1],
+          [0.2, 0.2, 1, 0]
+        ]  
+  let deg x = degradeBy (range 0.5 0.9 $ (10011 ~>) $ slow 13 $ perlin) $ (1 ~>) $ x
+  d1
+    $ someCyclesBy (range 0 0.2 $ (1200 ~>) $ slow 11.1111 $ perlin) (iter 8)
+    $ (1 ~>)
+    $ someCyclesBy (range 0 0.5 $ (10101 <~) $ slow 12.2121 $ perlin) (rev)
+    $ (1 ~>)
+    $ deg
+    $ stack [
+      sometimesBy 0.125 (off "1s" (|+ note "-1")) 
+        $ mask ("[1 1 0 1 1 0 1 1 0 0 0 0 0 0]/2")
+        $ someCyclesBy (range 0 1 $ (144 ~>) $ slow 8.113 $ perlin) (|+ midichan 4)
+        $ midichan (fmap([0,1,2,3]!!) $ markovPat 16 0 markovmatrix)
+        # s "rytm" # amp 1 # note "c3"
+      , slow 2 $ midichan 10 # note "c5" # s "harmor" # amp 1 
+        # legato (range 0.3 1 $ (33 ~>) $ rand)
+    ] # cps (0.666 / (4/3))
+  d2
+    $ deg
+    $ stack [
+      (0.5 ~>) $ s "rytm" # midichan 8 # note "c3" # amp 1
+      , whenmod 50 25 g $ slow 8 $ s "rytm" # midichan 10 # note "c3" # amp 1
+    ]
+  d4 
+    $ (11 ~>)
+    $ slow (segment 2 $ range 1 4 $ (2389 <~) $ slow 14 $ perlin) 
+      $ s "rytm" # ccn 92 # ccv (choose [0,1,2]) # midichan 12
+
+
+
+
+hush
+
+
+
+
+
+
+
+
+
+
+
+
+
+hush

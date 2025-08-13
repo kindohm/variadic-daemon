@@ -1,3 +1,7 @@
+
+hush
+
+
 do
   let g x = (const $ s "~") $ x
   let msk = "[1 0 1 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0]/2"
@@ -8,30 +12,48 @@ do
           [0.2, 0.2, 1, 0]
         ]  
   d1
-    $ someCyclesBy (range 0 0.7 $ slow 11 $ perlin) (iter 8)
+    $ slow (4/3)
+    $ someCyclesBy (range 0 0.333 $ slow 11 $ perlin) (iter 8)
     $ (1 ~>)
-    $ someCyclesBy 0.2 (linger "1s")
+    $ sometimesBy (range 0 0.333 $ (101010 ~>) $ slow 11.111 $ perlin) ("3s" ~>)
     $ (1 ~>)
-    $ sometimesBy 0.25 (slow 2)
+    $ sometimesBy (range 0 0.5 $ (1010 ~>) $ slow 10.111 $ perlin) (slow 2)
     $ (1 ~>)
-    $ sometimesBy 0.25 (slow 2)
+    $ sometimesBy (range 0 0.333 $ (13310 ~>) $ slow 12.111 $ perlin) (off "1s" id)
     $ (1 ~>)
-    $ degradeBy (range 0 0.8 $ slow 13.11 $ perlin)
+    $ sometimesBy (range 0 0.333 $ (9010 ~>) $ slow 9.234 $ perlin) (off "1s" id)
     $ (1 ~>)
+    $ degradeBy (range 0 0.666 $ slow 13.11 $ perlin)
+    $ (1 ~>)
+    $ whenmod 23 21 (|+ note "-2")
+    $ someCyclesBy (range 0 0.333 $ (4201 ~>) $ slow 10 $ perlin) (const $ stack [
+      midichan "{10 9 9 11 9 9}%16" # amp 1 # note "c3"
+    ] # s "rytm")
     $ stack [
-      off "{3s 1s 1s}%16" (# midichan 8)
+      off "{3s 1s 1s}%16" ((# midichan 8))
+        $ sometimesBy (range 0 0.9 $ slow 13 perlin) (superimpose ((# midichan 0) . (|+ note "{0 -2 -4 -6}%12")))
         $ mask msk 
         $ midichan (fmap([2,3,6,7]!!) $ markovPat 16 0 markovmatrix)
         # s "rytm" # amp 1 # note "c3"
       , mask msk 
         $ amp (fmap([1, 0.1, 0.1, 0.1]!!) $ markovPat 16 0 markovmatrix)
-          # s "harmor" # note "c" # midichan 8
+          # s "harmor" # note "f4" # midichan 8
+      , fast "{5 2 6 3 1 4}%3" $ ccn 28 # ccv (range 0 110 $ (78 ~>) $ rand) # midichan 7 # s "rytm"
+      , fast "{5 2 6 3 1 4 3 2}%3" $ ccn 29 # ccv (range 0 127 $ (278 ~>) $ rand) # midichan 7 # s "rytm"
+      , fast "{5 2 6 3 4}%3" $ ccn 24 # ccv (range 32 75 $ (178 ~>) $ rand) # midichan 7 # s "rytm"
+      , fast "{5 2 6 3 1 4 3 2}%3" $ ccn 29 # ccv (range 0 127 $ (278 ~>) $ rand) # midichan 3 # s "rytm"
+      , fast "{5 2 6 3 4}%3" $ ccn 24 # ccv (range 32 75 $ (178 ~>) $ rand) # midichan 3 # s "rytm"
     ] # cps 0.666
-  d2 $ whenmod 60 30 g $  (0.5 ~>) $ midichan 1 # note "c3" # amp 1 # s "rytm"
-  d3 $ slow 8 $ midichan 4 # note "c3" # amp 1 # s "rytm"
+  d2 $ whenmod 40 20 g $ (0.5 ~>) $ midichan 1 # note "c3" # amp 1 # s "rytm"
+  d3 $ every 3 id $ slow 16 $ midichan 4 # note "c3" # amp 1 # s "rytm"
+  d4 
+    $ (11 ~>)
+    $ slow (segment 2 $ range 1 4 $ (2389 <~) $ slow 14 $ perlin) 
+      $ s "rytm" # ccn 92 # ccv (choose [0,1,2]) # midichan 12
 
 
-d3 $ slow 4 $ mask "[1 0 1 1 0 1 0 0 1 0 0 0 1 1 0]/2" $ (|+ note "-24") $ note (scale "locrian" "0 4 2 -1 -2 -3 1 2 3 4 8") # s "rytm" # midichan 0 # amp 1
+d1 $ s "rytm" # midichan 6 # note "c3" # amp 1
+
 
     hush
 
